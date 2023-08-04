@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 """
 Download from W&B the raw dataset and apply some basic data cleaning, exporting the result to a new artifact
@@ -29,6 +30,7 @@ def go(args):
     logger.info("Starting pre-processing")
 
     # Drop outliers
+    logger.info("Drop outliers")
     min_price = args.min_price
     max_price = args.max_price
     idx = df['price'].between(min_price, max_price)
@@ -37,10 +39,12 @@ def go(args):
     # Convert last_review to datetime
     df['last_review'] = pd.to_datetime(df['last_review'])
 
-    idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
-    df = df[idx].copy()
+    #logger.info("Drop data for wrong geolocation")
+    #idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
+    #df = df[idx].copy()
 
     # Saving output artifact
+    logger.info("Save file")
     df.to_csv("clean_sample.csv", index=False)
 
     artifact = wandb.Artifact(
@@ -50,6 +54,9 @@ def go(args):
     )
     artifact.add_file("clean_sample.csv")
     run.log_artifact(artifact)
+
+
+
 
 
 if __name__ == "__main__":
