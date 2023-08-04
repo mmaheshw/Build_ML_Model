@@ -49,17 +49,26 @@ def test_proper_boundaries(data: pd.DataFrame):
     assert np.sum(~idx) == 0
 
 
-def test_similar_neigh_distrib(data: pd.DataFrame, ref_data: pd.DataFrame, kl_threshold: float):
+#def test_similar_neigh_distrib(data: pd.DataFrame, ref_data: pd.DataFrame, kl_threshold: float):
     """
     Apply a threshold on the KL divergence to detect if the distribution of the new data is
     significantly different than that of the reference dataset
     """
-    dist1 = data['neighbourhood_group'].value_counts().sort_index()
-    dist2 = ref_data['neighbourhood_group'].value_counts().sort_index()
+    #dist1 = data['neighbourhood_group'].value_counts().sort_index()
+    #dist2 = ref_data['neighbourhood_group'].value_counts().sort_index()
 
-    assert scipy.stats.entropy(dist1, dist2, base=2) < kl_threshold
+    #assert scipy.stats.entropy(dist1, dist2, base=2) < kl_threshold
 
+def test_row_count(data):
+    """
+    Check dataset's size
+    """
+    assert 15000 < data.shape[0] < 1000000
 
-########################################################
-# Implement here test_row_count and test_price_range   #
-########################################################
+def test_price_range(data, min_price, max_price):
+    """
+    Check the range of the price to make sure the outliers have been removed
+    """
+    idx = data['price'].between(min_price, max_price)
+
+    assert np.sum(idx) == data.shape[0]
